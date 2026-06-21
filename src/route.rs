@@ -2,9 +2,9 @@ use std::sync::Arc;
 
 use anyhow::Result;
 use axum::{
+    Router,
     middleware::from_fn_with_state,
     routing::{delete, get, post},
-    Router,
 };
 use axum_messages::MessagesManagerLayer;
 use tokio::sync::RwLock;
@@ -14,13 +14,13 @@ use tracing::info;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::{
+    AppState,
     handler::{
         auth_middleware, handler_404, health_checker_handler, home_handler, login_page_handler,
         login_user_handler, logout_handler, register_page_handler, register_user_handler,
         todo_add_handler, todo_create_handler, todo_delete_handler, todo_edit_handler,
         todo_list_handler, todo_patch_handler,
     },
-    AppState,
 };
 
 /// This function serves as the entry point for running the Axum web server.
@@ -72,35 +72,35 @@ fn create_router(app_state: Arc<RwLock<AppState>>) -> Router {
     // General router of our application
     Router::new()
         .route("/", get(home_handler))
-        .route(
-            "/register",
-            get(register_page_handler).post(register_user_handler),
-        )
-        .route("/login", get(login_page_handler).post(login_user_handler))
-        .route(
-            "/todo/list",
-            get(todo_list_handler)
-                .route_layer(from_fn_with_state(app_state.clone(), auth_middleware)),
-        )
-        .route(
-            "/logout",
-            post(logout_handler)
-                .route_layer(from_fn_with_state(app_state.clone(), auth_middleware)),
-        )
-        .route(
-            "/create",
-            get(todo_create_handler)
-                .post(todo_add_handler)
-                .route_layer(from_fn_with_state(app_state.clone(), auth_middleware)),
-        )
-        .route(
-            "/edit",
-            get(todo_edit_handler)
-                .patch(todo_patch_handler)
-                .route_layer(from_fn_with_state(app_state.clone(), auth_middleware)),
-        )
-        .route("/delete", delete(todo_delete_handler))
-        .route("/healthchecker", get(health_checker_handler))
+        // .route(
+        //     "/register",
+        //     get(register_page_handler).post(register_user_handler),
+        // )
+        // .route("/login", get(login_page_handler).post(login_user_handler))
+        // .route(
+        //     "/todo/list",
+        //     get(todo_list_handler)
+        //         .route_layer(from_fn_with_state(app_state.clone(), auth_middleware)),
+        // )
+        // .route(
+        //     "/logout",
+        //     post(logout_handler)
+        //         .route_layer(from_fn_with_state(app_state.clone(), auth_middleware)),
+        // )
+        // .route(
+        //     "/create",
+        //     get(todo_create_handler)
+        //         .post(todo_add_handler)
+        //         .route_layer(from_fn_with_state(app_state.clone(), auth_middleware)),
+        // )
+        // .route(
+        //     "/edit",
+        //     get(todo_edit_handler)
+        //         .patch(todo_patch_handler)
+        //         .route_layer(from_fn_with_state(app_state.clone(), auth_middleware)),
+        // )
+        // .route("/delete", delete(todo_delete_handler))
+        // .route("/healthchecker", get(health_checker_handler))
         .nest_service(
             "/assets",
             ServeDir::new(format!("{}/assets", assets_path.to_str().unwrap())), // Serve static assets

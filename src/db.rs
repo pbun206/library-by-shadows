@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use sqlx::{sqlite::SqlitePoolOptions, SqlitePool};
+use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
 
 const MAX_CONNECTIONS: u32 = 10;
 
