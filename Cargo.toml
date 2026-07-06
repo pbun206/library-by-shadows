@@ -24,4 +24,6 @@ tower-sessions = "0.15.0"
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 uuid = { version = "1.23.3", features = ["v4"] }
-derive_more = { version = "2.1.1", features = ["display", "error"] }
+derive_more = { version = "2.1.1", features = ["display", "error", "from"] }
+axum-test = "21.0.0"
+tower = "0.5.3"

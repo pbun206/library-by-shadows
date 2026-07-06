@@ -7,8 +7,17 @@ pub struct Config {
 }
 
 impl Config {
+    pub fn test_default() -> Config {
+        Config {
+            database_url: "testing!".into(), 
+            jwt_secret: "test-secret".into(),
+            jwt_expires_in: "60m".into(),
+            jwt_maxage: 60,
+        }
+    }
+
     // Init based on environmental values
-    pub fn init() -> Self {
+    pub fn init_from_env() -> Self {
         let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
         let jwt_secret = std::env::var("JWT_SECRET").expect("JWT_SECRET must be set");
         let jwt_expires_in = std::env::var("JWT_EXPIRED_IN").expect("JWT_EXPIRED_IN must be set");

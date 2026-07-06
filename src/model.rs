@@ -53,8 +53,8 @@ enum Rule {
 }
 
 // Urls
-
-pub struct URL {
+#[derive(FromRow)]
+pub struct Url {
     pub url: String,
     pub title: String,
     pub description: String,
@@ -64,3 +64,5 @@ pub struct URL {
     pub last_published_at: Option<i64>,
     pub last_edited_at: Option<i64>,
 }
+
+

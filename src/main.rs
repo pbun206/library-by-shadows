@@ -1,10 +1,10 @@
 mod config;
 mod db;
-mod handlers;
-mod route;
-mod model;
-mod services;
 mod error;
+mod handlers;
+mod model;
+mod route;
+mod services;
 
 use crate::config::Config;
 use anyhow::Result;
@@ -23,6 +23,19 @@ pub struct AppState {
     pub config: Config,
 }
 
+impl AppState {
+    pub fn new(pool: SqlitePool, config: Config) -> Self {
+        Self { pool, config }
+    }
+
+    pub fn with_test_config(pool: SqlitePool) -> Self {
+        Self {
+            pool,
+            config: Config::test_default(),
+        }
+    }
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
     // Load envs
@@ -39,7 +52,7 @@ async fn main() -> Result<()> {
 
     info!("initializing config…");
     // Retrieve the value of the `DATABASE_URL` from .env file
-    let config = Config::init();
+    let config = Config::init_from_env();
 
     info!("connecting db…");
     // Connect to `Sqlite` database

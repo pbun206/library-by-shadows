@@ -13,7 +13,10 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::{
     AppState,
-    handlers::api::url::{delete_url, get_url, post_url},
+    handlers::api::{
+        auth::{post_login, post_register},
+        url::{delete_url, get_url, post_url},
+    },
 };
 
 /// This function serves as the entry point for running the Axum web server.
@@ -39,7 +42,7 @@ pub async fn serve(app_state: Arc<RwLock<AppState>>) -> Result<()> {
 /// This function defines the API routes for the application.
 /// It takes the application state as input and sets up
 /// the routes for handling different HTTP methods and endpoints.
-fn create_router(app_state: Arc<RwLock<AppState>>) -> Router {
+pub fn create_router(app_state: Arc<RwLock<AppState>>) -> Router {
     // Setup session storage and layer
     let session_store = MemoryStore::default();
     let session_layer = SessionManagerLayer::new(session_store).with_secure(false);
@@ -53,14 +56,21 @@ fn create_router(app_state: Arc<RwLock<AppState>>) -> Router {
         // .layer(cors_layer())
         ; // CORS usually API-only
 
-    let api_routes = Router::new().nest("/index", index_routes);
+    let auth_routes = Router::new()
+        .route("/register", post(post_register))
+        // .layer(cors_layer())
+        ; // CORS usually API-only
+
+    let api_routes = Router::new()
+        .nest("/index", index_routes)
+        .nest("/auth", auth_routes);
     // .layer(cors_layer()) // CORS usually API-only
     // General router of our application
     Router::new()
         .nest("/api", api_routes)
         .with_state(app_state)
         // .fallback(handler_404) // Add a Fallback service for handling unknown paths
-        .layer(MessagesManagerLayer)
+        // .layer(MessagesManagerLayer)
         .layer(session_layer)
-        .layer(TraceLayer::new_for_http())
+    // .layer(TraceLayer::new_for_http())
 }

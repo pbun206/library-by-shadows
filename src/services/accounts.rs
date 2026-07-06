@@ -6,14 +6,14 @@ use argon2::{
 use sqlx::{SqlitePool, query_as, query_scalar};
 use uuid::Uuid;
 
-use crate::model::User;
+use crate::{error::AppError, model::User};
 
 pub async fn create_user(
     email: String,
     password: String,
     username: String,
     pool: &SqlitePool,
-) -> Result<User> {
+) -> Result<User, AppError> {
     // Check if the email is already in use
     let email_taken: bool = query_scalar("SELECT EXISTS(SELECT 1 FROM users WHERE email = ?)")
         .bind(email.to_ascii_lowercase())
@@ -21,7 +21,7 @@ pub async fn create_user(
         .await
         .unwrap_or(false);
     if email_taken {
-        bail!("email already in use.");
+        return Err(AppError::Conflict);
     }
 
     // Also username
@@ -32,7 +32,7 @@ pub async fn create_user(
             .await
             .unwrap_or(false);
     if username_taken {
-        bail!("username already taken.");
+        return Err(AppError::Conflict);
     }
 
     let salt = SaltString::generate(&mut OsRng);
