@@ -8,7 +8,7 @@ anyhow = "1.0.102"
 argon2 = "0.5.3"
 password-hash = { version = "0.5.0", features = ["getrandom"] }
 askama = "0.16.0"
-axum = "0.8.9"
+axum = { version = "0.8.9", features = ["query"] }
 clap = "4.6.1"
 dotenv = "0.15.0"
 fastembed = "5.17.2"

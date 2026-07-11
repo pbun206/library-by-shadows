@@ -3,18 +3,19 @@ use std::sync::Arc;
 use anyhow::Result;
 use axum::{
     Router,
-    middleware::from_fn_with_state,
+    // middleware::from_fn_with_state,
     routing::{delete, get, post},
 };
 use tokio::sync::RwLock;
+use tower_http::cors::{Any, CorsLayer};
 use tower_sessions::{MemoryStore, SessionManagerLayer};
 use tracing::info;
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+// use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::{
     AppState,
     handlers::api::{
-        auth::{post_login, post_register},
+        auth::post_register,
         url::{delete_url, get_url, post_url},
     },
 };
@@ -43,28 +44,27 @@ pub async fn serve(app_state: Arc<RwLock<AppState>>) -> Result<()> {
 /// It takes the application state as input and sets up
 /// the routes for handling different HTTP methods and endpoints.
 pub fn create_router(app_state: Arc<RwLock<AppState>>) -> Router {
+    let cors = CorsLayer::new()
+        .allow_methods(Any)
+        // allow requests from any origin
+        .allow_origin(Any);
+
     // Setup session storage and layer
     let session_store = MemoryStore::default();
     let session_layer = SessionManagerLayer::new(session_store).with_secure(false);
 
     // Get the current directory for serving assets
-    let assets_path = std::env::current_dir().unwrap();
+    // let assets_path = std::env::current_dir().unwrap();
 
     // Get API routes :3
-    let index_routes = Router::new()
-        .route("/url", get(get_url).post(post_url).delete(delete_url))
-        // .layer(cors_layer())
-        ; // CORS usually API-only
+    let index_routes = Router::new().route("/url", get(get_url).post(post_url).delete(delete_url));
 
-    let auth_routes = Router::new()
-        .route("/register", post(post_register))
-        // .layer(cors_layer())
-        ; // CORS usually API-only
+    let auth_routes = Router::new().route("/register", post(post_register));
 
     let api_routes = Router::new()
         .nest("/index", index_routes)
-        .nest("/auth", auth_routes);
-    // .layer(cors_layer()) // CORS usually API-only
+        .nest("/auth", auth_routes)
+        .layer(cors);
     // General router of our application
     Router::new()
         .nest("/api", api_routes)
