@@ -1,2 +1,2 @@
 cp lbs.db lbs.db.bak
-DATABASE_URL=sqlite://lbs.db sqlx migrate run
+DATABASE_URL=sqlite://lb/lbs.db sqlx migrate run
