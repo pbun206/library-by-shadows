@@ -5,6 +5,7 @@ mod handlers;
 mod model;
 mod route;
 mod services;
+mod dto;
 
 use crate::config::Config;
 use anyhow::Result;

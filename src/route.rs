@@ -46,14 +46,14 @@ pub async fn serve(app_state: Arc<RwLock<AppState>>) -> Result<()> {
 pub fn create_router(app_state: Arc<RwLock<AppState>>) -> Router {
     let cors = CorsLayer::new()
         .allow_methods(Any)
-        // allow requests from any origin
+        // TODO
         .allow_origin(Any);
 
     // Setup session storage and layer
     let session_store = MemoryStore::default();
     let session_layer = SessionManagerLayer::new(session_store).with_secure(false);
 
-    // Get the current directory for serving assets
+    // TODO create a static
     // let assets_path = std::env::current_dir().unwrap();
 
     // Get API routes :3
@@ -61,10 +61,12 @@ pub fn create_router(app_state: Arc<RwLock<AppState>>) -> Router {
 
     let auth_routes = Router::new().route("/register", post(post_register));
 
+    // Cors for API routes only
     let api_routes = Router::new()
         .nest("/index", index_routes)
         .nest("/auth", auth_routes)
         .layer(cors);
+
     // General router of our application
     Router::new()
         .nest("/api", api_routes)

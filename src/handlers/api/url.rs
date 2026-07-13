@@ -5,26 +5,10 @@ use axum::{
     extract::{Query, State},
     http::StatusCode,
 };
-use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 
-use crate::{AppState, error::AppError, services::urls::add_url};
+use crate::{AppState, dto::index::url::{GetUrlResponse, PostUrlRequest, UrlQuery}, error::AppError, services::urls::add_url};
 
-#[derive(Deserialize, Serialize)]
-pub struct GetUrlResponse {
-    url: String,
-    pub title: String,
-    pub description: String,
-    pub first_indexed_at: i64,
-    pub last_indexed_at: i64,
-    pub last_published_at: Option<i64>,
-    pub last_edited_at: Option<i64>,
-}
-
-#[derive(Deserialize)]
-pub struct UrlQuery {
-    url: String,
-}
 pub async fn get_url(
     State(app_state): State<Arc<RwLock<AppState>>>,
     query: Query<UrlQuery>,
@@ -42,14 +26,6 @@ pub async fn get_url(
         last_published_at: internal_url.last_published_at,
         last_edited_at: internal_url.last_edited_at,
     }))
-}
-
-#[derive(Deserialize, Serialize)]
-pub struct PostUrlRequest {
-    url: String,
-    title: String,
-    description: String,
-    content: String,
 }
 
 pub async fn post_url(
@@ -79,13 +55,9 @@ pub async fn delete_url(
 
 #[cfg(test)]
 mod tests {
-    use crate::{AppState, handlers::testing::testing_server, route::create_router};
-    use axum::{body::Body, extract::Request};
+    use crate::handlers::testing::testing_server;
     use serde_json::json;
     use sqlx::SqlitePool;
-    use std::sync::Arc;
-    use tokio::sync::RwLock;
-    use tower::ServiceExt;
 
     use super::*;
 

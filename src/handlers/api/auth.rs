@@ -1,20 +1,13 @@
 use std::sync::Arc;
 use tokio::sync::RwLock;
-
 use axum::{Json, extract::State, http::StatusCode};
-use serde::{Deserialize, Serialize};
 
-use crate::{AppState, error::AppError, services::accounts::create_user};
+use crate::{AppState, dto::auth::PostRegister, error::AppError, services::accounts::create_user};
 
+/// Handler for GET me for user info based on JWT token
 pub async fn get_me() {}
 
-#[derive(Deserialize, Serialize)]
-pub struct PostRegister {
-    username: String,
-    email: String,
-    password: String,
-}
-
+/// Handler for POST register
 pub async fn post_register(
     State(app_state): State<Arc<RwLock<AppState>>>,
     Json(payload): Json<PostRegister>,
@@ -30,8 +23,10 @@ pub async fn post_register(
     Ok(StatusCode::CREATED)
 }
 
+/// Handler for POST login
 pub async fn post_login() {}
 
+/// Handler for POST logout
 pub async fn post_logout() {}
 
 #[cfg(test)]
