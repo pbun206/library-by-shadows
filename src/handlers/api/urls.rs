@@ -7,7 +7,12 @@ use axum::{
 };
 use tokio::sync::RwLock;
 
-use crate::{AppState, dto::index::url::{GetUrlResponse, PostUrlRequest, UrlQuery}, error::AppError, services::urls::add_url};
+use crate::{
+    AppState,
+    dto::index::urls::{GetUrlResponse, PostUrlRequest, UrlQuery},
+    error::AppError,
+    services::urls::add_url,
+};
 
 pub async fn get_url(
     State(app_state): State<Arc<RwLock<AppState>>>,
@@ -66,7 +71,7 @@ mod tests {
     fn post_url(pool: SqlitePool) {
         let test_server = testing_server(pool);
         let response = test_server
-            .post("/api/index/url")
+            .post("/api/index/urls")
             .json(&json!(PostUrlRequest {
                 url: "ec.crypton.co.jp/pages/prod/virtualsinger/cv01_us".to_string(),                title: "About HATSUNE MIKU | CRYPTON FUTURE MEDIA".to_string(),
                 description: "She is a singing voice synthesizer featured in over 100,000 songs released worldwide. Hatsune Miku means The first Sound from the Future.".to_string(),
@@ -82,7 +87,7 @@ mod tests {
     fn post_url_and_get(pool: SqlitePool) {
         let test_server = testing_server(pool);
         let response = test_server
-            .post("/api/index/url")
+            .post("/api/index/urls")
             .json(&json!(PostUrlRequest {
                 url: "ec.crypton.co.jp/pages/prod/virtualsinger/cv01_us".to_string(),                title: "About HATSUNE MIKU | CRYPTON FUTURE MEDIA".to_string(),
                 description: "She is a singing voice synthesizer featured in over 100,000 songs released worldwide. Hatsune Miku means The first Sound from the Future.".to_string(),
@@ -93,7 +98,7 @@ mod tests {
         assert_eq!(response.status_code(), StatusCode::CREATED);
 
         let response = test_server
-            .get("/api/index/url?url=ec.crypton.co.jp/pages/prod/virtualsinger/cv01_us")
+            .get("/api/index/urls?url=ec.crypton.co.jp/pages/prod/virtualsinger/cv01_us")
             .await;
 
         assert_eq!(response.status_code(), StatusCode::OK);
@@ -114,7 +119,7 @@ mod tests {
     fn post_url_delete_and_get(pool: SqlitePool) {
         let test_server = testing_server(pool);
         let response = test_server
-            .post("/api/index/url")
+            .post("/api/index/urls")
             .json(&json!(PostUrlRequest {
                 url: "ec.crypton.co.jp/pages/prod/virtualsinger/cv01_us".to_string(),                title: "About HATSUNE MIKU | CRYPTON FUTURE MEDIA".to_string(),
                 description: "She is a singing voice synthesizer featured in over 100,000 songs released worldwide. Hatsune Miku means The first Sound from the Future.".to_string(),
@@ -125,13 +130,12 @@ mod tests {
         assert_eq!(response.status_code(), StatusCode::CREATED);
 
         let response = test_server
-            .delete("/api/index/url?url=ec.crypton.co.jp/pages/prod/virtualsinger/cv01_us")
+            .delete("/api/index/urls?url=ec.crypton.co.jp/pages/prod/virtualsinger/cv01_us")
             .await;
         assert_eq!(response.status_code(), StatusCode::NO_CONTENT);
 
-
         let response = test_server
-            .get("/api/index/url?url=ec.crypton.co.jp/pages/prod/virtualsinger/cv01_us")
+            .get("/api/index/urls?url=ec.crypton.co.jp/pages/prod/virtualsinger/cv01_us")
             .await;
 
         assert_eq!(response.status_code(), StatusCode::NOT_FOUND);

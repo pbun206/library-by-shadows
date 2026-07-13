@@ -16,7 +16,7 @@ pub async fn add_url(
 ) -> Result<Url, AppError> {
     let url = query_as!(
         Url,
-        "INSERT INTO url (url,title, description, content) VALUES (?, ?, ?, ?) RETURNING *",
+        "INSERT INTO urls (url,title, description, content) VALUES (?, ?, ?, ?) RETURNING *",
         url,
         title,
         description,
@@ -39,7 +39,7 @@ pub async fn update_url(
 ) -> Result<(), AppError> {
     query_as!(
         URL,
-        "UPDATE url SET title = ?, description = ?, content = ? WHERE url = ?",
+        "UPDATE urls SET title = ?, description = ?, content = ? WHERE url = ?",
         title,
         description,
         content,
@@ -54,7 +54,7 @@ pub async fn update_url(
 
 /// Get a url from database :3. None -> not there
 pub async fn get_url(url: String, pool: &SqlitePool) -> Result<Option<Url>, AppError> {
-    let url = query_as!(Url, "Select * FROM url where url = ?", url,)
+    let url = query_as!(Url, "Select * FROM urls where url = ?", url,)
         .fetch_optional(pool)
         .await
         .map_err(|e| anyhow!("database error: {}", e))?;
@@ -63,7 +63,7 @@ pub async fn get_url(url: String, pool: &SqlitePool) -> Result<Option<Url>, AppE
 
 /// Delete a url from database :<
 pub async fn delete_url(url: String, pool: &SqlitePool) -> Result<(), AppError> {
-    query_as!(Url, "DELETE FROM url where url = ? RETURNING *", url,)
+    query_as!(Url, "DELETE FROM urls where url = ? RETURNING *", url,)
         .fetch_optional(pool)
         .await
         .map_err(|e| anyhow!("database error: {}", e))?

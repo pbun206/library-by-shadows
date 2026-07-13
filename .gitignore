@@ -1,5 +1,9 @@
 /target
 .env
+lbs.db.bak
 lbs.db
 lbs.db-wal
 lbs.db-shm
+lbs_test.db
+lbs_test.db-wal
+lbs_test.db-shm

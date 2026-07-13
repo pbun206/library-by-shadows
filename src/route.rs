@@ -16,7 +16,7 @@ use crate::{
     AppState,
     handlers::api::{
         auth::post_register,
-        url::{delete_url, get_url, post_url},
+        urls::{delete_url, get_url, post_url},
     },
 };
 
@@ -57,7 +57,7 @@ pub fn create_router(app_state: Arc<RwLock<AppState>>) -> Router {
     // let assets_path = std::env::current_dir().unwrap();
 
     // Get API routes :3
-    let index_routes = Router::new().route("/url", get(get_url).post(post_url).delete(delete_url));
+    let index_routes = Router::new().route("/urls", get(get_url).post(post_url).delete(delete_url));
 
     let auth_routes = Router::new().route("/register", post(post_register));
 
