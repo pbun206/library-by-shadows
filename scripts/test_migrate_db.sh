@@ -1,4 +1,3 @@
-rm lbs_test.db
-cp lbs.db lbs.db.bak
-cp lbs.db.bak lbs_test.db
-DATABASE_URL=sqlite://lb/lbs_test.db sqlx migrate run
+scripts/backup_db.sh
+sqlite3 db/lbs.db.bak ".backup db/lbs_test.db"
+DATABASE_URL=sqlite://db/lbs_test.db sqlx migrate run

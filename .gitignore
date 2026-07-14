@@ -7,3 +7,4 @@ lbs.db-shm
 lbs_test.db
 lbs_test.db-wal
 lbs_test.db-shm
+/db

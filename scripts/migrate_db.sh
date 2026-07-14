@@ -1,2 +1,2 @@
-cp lbs.db lbs.db.bak
-DATABASE_URL=sqlite://lb/lbs.db sqlx migrate run
+scripts/backup_db.sh
+DATABASE_URL=sqlite://db/lbs.db sqlx migrate run

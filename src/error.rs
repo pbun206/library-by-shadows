@@ -16,7 +16,7 @@ use std::collections::HashMap;
 /// For convenience, this represents both API errors as well as internal recoverable errors,
 /// and maps them to appropriate status codes along with at least a minimally useful error
 /// message in a plain text body, or a JSON body in the case of `UnprocessableEntity`.
-#[derive(Display, Error, Debug)]
+#[derive(Debug, Display, Error)]
 pub enum AppError {
     /// Return `401 Unauthorized`
     #[display("authentication required")]
