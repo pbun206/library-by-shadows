@@ -1,22 +1,27 @@
-use std::sync::Arc;
-
 use anyhow::Result;
 use axum::{
     Router,
     // middleware::from_fn_with_state,
-    routing::{delete, get, post},
+    routing::{get, post},
 };
+use std::sync::Arc;
 use tokio::sync::RwLock;
-use tower_http::cors::{Any, CorsLayer};
+use tower_http::{
+    cors::{Any, CorsLayer},
+    services::ServeDir,
+};
 use tower_sessions::{MemoryStore, SessionManagerLayer};
 use tracing::info;
 // use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::{
     AppState,
-    handlers::api::{
-        auth::post_register,
-        urls::{delete_url, get_url, post_url},
+    handlers::{
+        api::{
+            auth::post_register,
+            urls::{delete_url, get_url, post_url},
+        },
+        web::search::{get_search_page, home},
     },
 };
 
@@ -53,8 +58,7 @@ pub fn create_router(app_state: Arc<RwLock<AppState>>) -> Router {
     let session_store = MemoryStore::default();
     let session_layer = SessionManagerLayer::new(session_store).with_secure(false);
 
-    // TODO create a static
-    // let assets_path = std::env::current_dir().unwrap();
+    let public_path = std::env::current_dir().unwrap().join("public");
 
     // Get API routes :3
     let index_routes = Router::new().route("/urls", get(get_url).post(post_url).delete(delete_url));
@@ -67,9 +71,17 @@ pub fn create_router(app_state: Arc<RwLock<AppState>>) -> Router {
         .nest("/auth", auth_routes)
         .layer(cors);
 
+    // Cors for API routes only
+    let web_routes = Router::new().route("/search", get(get_search_page)).route("/search", get(home));
+
     // General router of our application
     Router::new()
         .nest("/api", api_routes)
+        .merge(web_routes)
+        .nest_service(
+            "/public",
+            ServeDir::new(format!("{}/public", public_path.to_str().unwrap())), // Serve static assets
+        )
         .with_state(app_state)
         // .fallback(handler_404) // Add a Fallback service for handling unknown paths
         // .layer(MessagesManagerLayer)

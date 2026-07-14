@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}
+Home - LbS
+{% endblock %}
+{% block content %}
+<div class="mx-auto text-wrap sm:text-start w-175">
+  {% for result in results -%}
+  <h3> <a href="{{result.url}}">{{result.title}} </a> </h3>
+  <p> {{ result.description}} </p>
+  {%- endfor %}
+</div>
+{% endblock %}

@@ -5,9 +5,9 @@ use crate::model::SearchResult;
 /// Get Url query
 #[derive(Deserialize)]
 pub struct GetSearchQuery {
-    query: String,
-    limit: u8,
-    offset: u8,
+    pub query: String,
+    pub limit: Option<u8>,
+    pub offset: Option<u8>,
 }
 
 /// Body for search results

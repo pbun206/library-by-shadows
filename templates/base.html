@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>{% block title %}{% endblock %}</title>
+  <link rel="stylesheet" href="public/style.css">
+</head>
+
+<body>
+  <h1 class="pb-3 text-[oklch(0.5_0.1_270)]">lib by shadows</h1>
+  <div>
+    {% block content %}{% endblock %}
+  </div>
+  <footer class="fixed bottom-0 left-0 right-0 flex flex-row justify-start bg-black-bg py-3">
+    <li class="px-4">
+      <a class="text-white-fg no-underline" href="/">search</a>
+    </li>
+    <li class="px-4">
+      <a class="text-white-fg no-underline" href="about">about</a>
+    </li>
+    <li class="px-4">
+      <a class="text-white-fg no-underline" href="https://github.com/pbun206/library-by-shadows">github</a>
+    </li>
+  </footer>
+</body>
+
+</html>

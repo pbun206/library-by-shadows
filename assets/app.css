@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+@theme {
+  --white-fg: oklch(0.8 0 0);
+  --black-fg: oklch(0.4 0 0);
+  --black-bg: oklch(0.3 0 0);
+}
