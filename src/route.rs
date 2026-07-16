@@ -72,7 +72,9 @@ pub fn create_router(app_state: Arc<RwLock<AppState>>) -> Router {
         .layer(cors);
 
     // Cors for API routes only
-    let web_routes = Router::new().route("/search", get(get_search_page)).route("/search", get(home));
+    let web_routes = Router::new()
+        .route("/search", get(get_search_page))
+        .route("/", get(home));
 
     // General router of our application
     Router::new()
@@ -80,7 +82,7 @@ pub fn create_router(app_state: Arc<RwLock<AppState>>) -> Router {
         .merge(web_routes)
         .nest_service(
             "/public",
-            ServeDir::new(format!("{}/public", public_path.to_str().unwrap())), // Serve static assets
+            ServeDir::new(public_path.to_str().unwrap()), // Serve static assets
         )
         .with_state(app_state)
         // .fallback(handler_404) // Add a Fallback service for handling unknown paths
