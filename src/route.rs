@@ -21,7 +21,10 @@ use crate::{
             auth::post_register,
             urls::{delete_url, get_url, post_url},
         },
-        web::search::{get_search_page, home},
+        web::{
+            info::{AboutPage, get_about_page},
+            search::{get_search_page, home},
+        },
     },
 };
 
@@ -74,7 +77,8 @@ pub fn create_router(app_state: Arc<RwLock<AppState>>) -> Router {
     // Cors for API routes only
     let web_routes = Router::new()
         .route("/search", get(get_search_page))
-        .route("/", get(home));
+        .route("/", get(home))
+        .route("/about", get(get_about_page));
 
     // General router of our application
     Router::new()

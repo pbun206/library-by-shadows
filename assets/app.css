@@ -1,8 +1,18 @@
 @import "tailwindcss";
 
+* {}
+
 @theme {
-  --white-fg: oklch(0.8 0 0);
-  --black-fg: oklch(0.4 0 0);
-  --blue-fg: oklch(0.4 0.1 270);
-  --black-bg: oklch(0.3 0 0);
+  --font-display: "Inter Display", sans-serif;
+
+  --color-white-fg: oklch(0.97 0 0);
+
+  --color-black-fg: oklch(0.4 0 0);
+  --color-black-muted: oklch(0.6 0 0);
+  --color-black-faint: oklch(0.7 0 0);
+  --color-black-bg: oklch(0.3 0 0);
+
+  --color-accent-fg: oklch(0.4 0.1 230);
+  --color-accent-subtext: oklch(0.6 0.1 230);
+
 }

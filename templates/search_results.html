@@ -3,10 +3,13 @@
 Results - LbS
 {% endblock %}
 {% block content %}
-<div class="mx-auto text-wrap sm:text-start w-175">
+{% include "fragments/search_field.html" %}
+<div class="mx-5 my-5 text-wrap sm:text-start em-35">
   {% for result in results -%}
-    <h1 class="text-xl text-blue-fg"> <a href="https://{{result.url}}">{{result.title}} </a> </h3>
-    <p> {{ result.description}} </p>
-    {%- endfor %}
+  <div class="py-4">
+    <h1 class="text-accent-fg font-semibold"> <a href="https://{{result.url}}">{{result.title}} </a> </h3>
+      <p> {{ result.description}} </p>
+  </div>
+  {%- endfor %}
 </div>
 {% endblock %}
