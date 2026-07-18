@@ -12,6 +12,7 @@ use crate::{
 #[derive(Template, WebTemplate)]
 #[template(path = "search_results.html")]
 pub struct SearchResultsTemplate {
+    search_field_value: String,
     results: Vec<SearchResult>,
 }
 
@@ -32,15 +33,20 @@ pub async fn get_search_page(
         .into_iter()
         .map(|url| url.into())
         .collect(),
+        search_field_value: query.query,
     })
 }
 
 #[derive(Template, WebTemplate)]
 #[template(path = "home.html")]
-pub struct HomeTemplate {}
+pub struct HomeTemplate {
+    search_field_value: String,
+}
 
 pub async fn home(
     State(app_state): State<Arc<RwLock<AppState>>>,
 ) -> Result<HomeTemplate, AppError> {
-    Ok(HomeTemplate {})
+    Ok(HomeTemplate {
+        search_field_value: String::new()
+    })
 }

@@ -3,7 +3,12 @@
 Home - LbS
 {% endblock %}
 {% block content %}
-<div>
-  {% include "fragments/search_field.html" %}
+<div class="h-full items-center bg-[url(/public/img/backdrops/simple.webp)] bg-cover bg-center">
+  <div class="bg-white/50 w-full h-full relative">
+    <div class="text-center text-black-fg font-light text-7xl absolute top-1/4 inset-x-0">
+      The Sapling Lib
+    </div>
+    <div class="flex justify-center inset-x-0 absolute top-1/2"> {% include "fragments/search_field.html" %} </div>
+  </div>
 </div>
 {% endblock %}
