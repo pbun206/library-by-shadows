@@ -1,4 +1,4 @@
 pub mod accounts;
-pub mod urls;
-mod search;
+pub mod search;
 mod testing;
+pub mod urls;

@@ -25,13 +25,17 @@ pub async fn search_query(
         OFFSET ?;
         ",
     )
-        .bind(query)
+        .bind(into_match_query(query))
         .bind(limit as i64)
         .bind(offset as i64)
     .fetch_all(pool)
     .await
     .map_err(|e| anyhow!("database error: {}", e))?;
     Ok(res)
+}
+
+pub fn into_match_query(query: &str) -> String {
+    query.to_string()
 }
 
 #[cfg(test)]
@@ -42,6 +46,7 @@ mod tests {
 
     use super::*;
 
+    // in the future, we need tests that ensure that deleting and updating urls do not keep them in the virtual table TODO
     /// Checks if searching a empty pool gets back an empty result
     #[sqlx::test]
     async fn search_empty(pool: SqlitePool) {

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>{% block title %}{% endblock %}</title>
+  <link rel="stylesheet" href="public/style.css">
+</head>
+
+<body class="h-screen flex flex-col">
+  <div class="grow">
+    {% block content %}{% endblock %}
+  </div>
+  <footer class="w-full flex flex-row justify-start bg-black-bg py-3 text-sm">
+    <li class="px-4">
+      <a class="text-white-fg no-underline" href="/">Home</a>
+    </li>
+    <li class="px-4">
+      <a class="text-white-fg no-underline" href="about">About</a>
+    </li>
+    <li class="px-4">
+      <a class="text-white-fg no-underline" href="https://github.com/pbun206/library-by-shadows">Github</a>
+    </li>
+  </footer>
+</body>
+
+</html>

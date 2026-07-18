@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}
+Results - LbS
+{% endblock %}
+{% block content %}
+<div class="h-full items-center bg-[url(/public/img/backdrops/simple_side.webp)] bg-cover bg-center">
+  <div class="bg-white/50 w-full h-full">
+    <div class="flex flex-col mx-5 my-5 text-wrap sm:text-start em-35">
+      <div class="self-start flex flex-row items-center">
+        <div class="mx-4 text-center text-black-text text-4xl"> The
+          Sapling Lib
+        </div>
+        {% include "fragments/search_field.html" %}
+      </div>
+      <div class="mx-4 my-4 self-start grow max-w-3xl text-lg">
+        {% for result in results -%}
+        <div class="my-4">
+          <h1 class="text-accent-fg font-medium text-lg"> <a href="https://{{result.url}}">{{result.title}} </a> </h1>
+          <p> {{ result.description}} </p>
+        </div>
+        {%- endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
