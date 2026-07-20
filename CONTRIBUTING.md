@@ -1,22 +1,46 @@
 Library by Shadows
 
-# Module
+# Modules
+
+migrations -> sqlx tables 
 
 handlers -> http handlers
+
 models -> structs for database
+
+dto -> data structure objects
+
 services -> code logic including database edits
 
-# Set-Up
+# Set-Up and Basics
 
-Run sqlx database create and sqlx migrate run
+if you want to actually use the server for adding urls, lmk and i can release the code for the browser extesnion. it's in firefox, but i'll vibe code a chrome version. however to make it work in firefox, you want to do some settings
 
-Use clippy and your average rust toolchain
+Run `sqlx database create` and `sqlx migrate run` to initialize database.
+
+`just build` -> builds project
+
+`just run` -> builds project and runs 
+
+`scripts/backup_db.sh` -> backup the current database
+
+`scripts/migrate_db.sh` -> backups, migrate the current database
+
+You can use cargo build or run, but you need just for the tailwind building.
+ 
+Please use rust analyzer, clippy, and your rust toolchain.
 
 # Documentation
 
 I'm honestly very lenient. However, I would like any comments for Option<_> or any unintuitive functions.
 
 # Testing
+
+`cargo check` -> check for compile errors in rust side.
+
+`cargo test` -> test software works
+
+`scripts/test_migrate_db.sh` -> backups, test migrate a backup version of the current database 
 
 Write tests if possible 
 
