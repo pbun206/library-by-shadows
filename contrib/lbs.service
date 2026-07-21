@@ -1,0 +1,9 @@
+[Unit]
+Description=lbs
+
+[Service]
+Type=simple
+ExecStart=%h/.cargo/bin/lbs
+
+[Install]
+WantedBy=default.target
