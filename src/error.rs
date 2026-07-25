@@ -18,6 +18,7 @@ use std::collections::HashMap;
 /// message in a plain text body, or a JSON body in the case of `UnprocessableEntity`.
 #[derive(Debug, Display, Error)]
 pub enum AppError {
+    VecEmbedingError,
     /// Return `401 Unauthorized`
     #[display("authentication required")]
     Unauthorized,
@@ -107,6 +108,7 @@ impl AppError {
 
     fn status_code(&self) -> StatusCode {
         match self {
+            Self::VecEmbedingError => StatusCode::INTERNAL_SERVER_ERROR,
             Self::Unauthorized => StatusCode::UNAUTHORIZED,
             Self::Forbidden => StatusCode::FORBIDDEN,
             Self::NotFound => StatusCode::NOT_FOUND,

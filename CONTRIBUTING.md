@@ -27,6 +27,8 @@ Run `sqlx database create` and `sqlx migrate run` to initialize database.
 `scripts/migrate_db.sh` -> backups, migrate the current database
 
 You can use cargo build or run, but you need just for the tailwind building.
+
+During initialization, the model will be downloaded.
  
 Please use rust analyzer, clippy, and your rust toolchain.
 
@@ -35,6 +37,8 @@ Please use rust analyzer, clippy, and your rust toolchain.
 I'm honestly very lenient. However, I would like any comments for Option<_> or any unintuitive functions.
 
 # Testing
+
+Make sure the model is downloaded, or all the tests will fail.
 
 `cargo check` -> check for compile errors in rust side.
 

@@ -3,7 +3,7 @@ use sqlx::{SqlitePool, query_as, query_scalar};
 
 use crate::{
     error::AppError,
-    model::{Url, User},
+    model::{Url, User}, services::vector_embeding::Embeder,
 };
 
 /// Adds a url from database :3
@@ -13,7 +13,9 @@ pub async fn add_url(
     description: String,
     content: String,
     pool: &SqlitePool,
+    embeder: &mut Embeder,
 ) -> Result<Url, AppError> {
+    let embeding = embeder.embed(&description, &content);
     let url = query_as!(
         Url,
         "INSERT INTO urls (url,title, description, content) VALUES (?, ?, ?, ?) RETURNING *",

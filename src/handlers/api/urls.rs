@@ -37,13 +37,15 @@ pub async fn post_url(
     State(app_state): State<Arc<RwLock<AppState>>>,
     Json(payload): Json<PostUrlRequest>,
 ) -> Result<StatusCode, AppError> {
-    let state = app_state.read().await;
+    let pool = &app_state.read().await.pool;
+    let embeder = &mut app_state.write().await.embeder;
     add_url(
         payload.url,
         payload.title,
         payload.description,
         payload.content,
-        &state.pool,
+        pool,
+        embeder,
     )
     .await?;
     Ok(StatusCode::CREATED)
