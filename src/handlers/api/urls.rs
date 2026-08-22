@@ -18,7 +18,7 @@ pub async fn get_url(
     State(app_state): State<Arc<RwLock<AppState>>>,
     query: Query<UrlQuery>,
 ) -> Result<Json<GetUrlResponse>, AppError> {
-    let state = app_state.read().await;
+    let state = &*app_state.read().await;
     let internal_url = crate::services::urls::get_url(query.0.url, &state.pool)
         .await?
         .ok_or(AppError::NotFound)?;
@@ -37,15 +37,14 @@ pub async fn post_url(
     State(app_state): State<Arc<RwLock<AppState>>>,
     Json(payload): Json<PostUrlRequest>,
 ) -> Result<StatusCode, AppError> {
-    let pool = &app_state.read().await.pool;
-    let embeder = &mut app_state.write().await.embeder;
+    let state = &mut *app_state.write().await;
     add_url(
         payload.url,
         payload.title,
         payload.description,
         payload.content,
-        pool,
-        embeder,
+        &state.pool,
+        &mut state.embeder,
     )
     .await?;
     Ok(StatusCode::CREATED)
