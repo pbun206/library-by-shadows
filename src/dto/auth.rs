@@ -9,7 +9,36 @@ use jsonwebtoken::{DecodingKey, Validation, decode};
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 
-use crate::{AppState, error::AppError};
+use crate::{
+    AppState,
+    error::AppError,
+    model::{Theme, User},
+};
+
+#[derive(Deserialize, Serialize)]
+pub struct GetMeResponse {
+    pub uuid: String,
+    pub username: String,
+    pub email: String,
+    pub created_at: i64,
+    pub is_account_enabled: bool,
+    pub web_theme: Theme,
+    pub is_admin: bool,
+}
+
+impl From<User> for GetMeResponse {
+    fn from(user: User) -> Self {
+        Self {
+            uuid: user.uuid,
+            username: user.username,
+            email: user.email,
+            created_at: user.created_at,
+            is_account_enabled: user.is_account_enabled,
+            web_theme: user.web_theme,
+            is_admin: user.is_admin,
+        }
+    }
+}
 
 #[derive(Deserialize, Serialize)]
 pub struct PostRegister {
@@ -24,10 +53,10 @@ pub struct PostLogin {
     pub password: String,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct PostLoginResponse {
-    access_token: String,
-    token_type: String,
+    pub access_token: String,
+    pub token_type: String,
 }
 
 impl PostLoginResponse {
