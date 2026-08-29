@@ -74,10 +74,15 @@ pub async fn get_url(url: String, pool: &SqlitePool) -> Result<Option<Url>, AppE
 
 /// Delete a url from database :<
 pub async fn delete_url(url: String, pool: &SqlitePool) -> Result<(), AppError> {
-    query_as!(Url, "DELETE FROM urls where url = ? RETURNING *", url,)
+    query!("DELETE FROM urls where url = ? RETURNING *", url,)
         .fetch_optional(pool)
         .await
         .map_err(|e| anyhow!("database error: {}", e))?
         .ok_or(AppError::NotFound)?;
+    query("DELETE INTO vec_urls where url = ?")
+        .bind(url)
+        .execute(pool)
+        .await
+        .map_err(|e| anyhow!("database error: {}", e))?;
     Ok(())
 }
