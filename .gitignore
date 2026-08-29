@@ -1,4 +1,5 @@
 /target
+.sqlx/
 /extensions
 .fastembed_cache
 .env

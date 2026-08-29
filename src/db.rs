@@ -9,7 +9,14 @@ const MAX_CONNECTIONS: u32 = 10;
 /// maximum number of connections in the connection pool to 10.
 pub async fn connect(pool_url: &str) -> Result<SqlitePool> {
     unsafe {
-        sqlite3_auto_extension(Some(std::mem::transmute::<*const (), unsafe extern "C" fn(*mut libsqlite3_sys::sqlite3, *mut *mut i8, *const libsqlite3_sys::sqlite3_api_routines) -> i32>(sqlite3_vec_init as *const ())));
+        sqlite3_auto_extension(Some(std::mem::transmute::<
+            *const (),
+            unsafe extern "C" fn(
+                *mut libsqlite3_sys::sqlite3,
+                *mut *mut i8,
+                *const libsqlite3_sys::sqlite3_api_routines,
+            ) -> i32,
+        >(sqlite3_vec_init as *const ())));
     }
 
     let pool = SqlitePoolOptions::new()

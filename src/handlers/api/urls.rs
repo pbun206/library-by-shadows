@@ -63,14 +63,13 @@ pub async fn delete_url(
 mod tests {
     use crate::handlers::testing::testing_server;
     use serde_json::json;
-    use sqlx::SqlitePool;
 
     use super::*;
 
     // Post url
-    #[sqlx::test]
-    fn post_url(pool: SqlitePool) {
-        let test_server = testing_server(pool);
+    #[tokio::test]
+    async fn post_url() {
+        let test_server = testing_server().await;
         let response = test_server
             .post("/api/index/urls")
             .json(&json!(PostUrlRequest {
@@ -84,9 +83,9 @@ mod tests {
     }
 
     // Post and get url
-    #[sqlx::test]
-    fn post_url_and_get(pool: SqlitePool) {
-        let test_server = testing_server(pool);
+    #[tokio::test]
+    async fn post_url_and_get() {
+        let test_server = testing_server().await;
         let response = test_server
             .post("/api/index/urls")
             .json(&json!(PostUrlRequest {
@@ -117,8 +116,8 @@ mod tests {
 
     // Post, delete, and get a url
     #[sqlx::test]
-    fn post_url_delete_and_get(pool: SqlitePool) {
-        let test_server = testing_server(pool);
+    async fn post_url_delete_and_get() {
+        let test_server = testing_server().await;
         let response = test_server
             .post("/api/index/urls")
             .json(&json!(PostUrlRequest {

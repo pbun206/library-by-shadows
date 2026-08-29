@@ -1,6 +1,6 @@
+use axum::{Json, extract::State, http::StatusCode};
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use axum::{Json, extract::State, http::StatusCode};
 
 use crate::{AppState, dto::auth::PostRegister, error::AppError, services::accounts::create_user};
 
@@ -38,9 +38,9 @@ mod tests {
     use super::*;
 
     // My first ever axum sqlx test
-    #[sqlx::test]
-    fn post_register_no_error(pool: SqlitePool) {
-        let test_server = testing_server(pool);
+    #[tokio::test]
+    async fn post_register_no_error() {
+        let test_server = testing_server().await;
         let response = test_server
             .post("/api/auth/register")
             .json(&json!(PostRegister {
@@ -54,9 +54,9 @@ mod tests {
     }
 
     // Ensure duplicate emails are handled :3
-    #[sqlx::test]
-    fn post_register_duplicate_email_error(pool: SqlitePool) {
-        let test_server = testing_server(pool);
+    #[tokio::test]
+    async fn post_register_duplicate_email_error() {
+        let test_server = testing_server().await;
         let response = test_server
             .post("/api/auth/register")
             .json(&json!(PostRegister {
@@ -82,8 +82,8 @@ mod tests {
 
     // Ensure duplicate emails are handled :3
     #[sqlx::test]
-    fn post_register_duplicate_username_error(pool: SqlitePool) {
-        let test_server = testing_server(pool);
+    fn post_register_duplicate_username_error() {
+        let test_server = testing_server().await;
         let response = test_server
             .post("/api/auth/register")
             .json(&json!(PostRegister {

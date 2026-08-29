@@ -11,6 +11,9 @@ pkgs.mkShell {
     pkgs.clippy
     pkgs.rust-analyzer
     pkgs.pkg-config
+    pkgs.sqlite
+    pkgs.sqlx-cli
+    pkgs.tailwindcss
   ];
   buildInputs = [
     pkgs.openssl

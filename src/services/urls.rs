@@ -1,5 +1,5 @@
 use anyhow::{Result, anyhow, bail};
-use sqlx::{SqlitePool, query_as, query_scalar};
+use sqlx::{SqlitePool, query, query_as, query_scalar};
 
 use crate::{
     error::AppError,
@@ -9,7 +9,7 @@ use crate::{
 
 /// Adds a url from database :3
 pub async fn add_url(
-    url: String,
+    url_string: String,
     title: String,
     description: String,
     content: String,
@@ -20,7 +20,7 @@ pub async fn add_url(
     let url = query_as!(
         Url,
         "INSERT INTO urls (url,title, description, content) VALUES (?, ?, ?, ?) RETURNING *",
-        url,
+        url_string,
         title,
         description,
         content,
@@ -28,17 +28,14 @@ pub async fn add_url(
     .fetch_one(pool)
     .await
     .map_err(|e| anyhow!("database error: {}", e))?;
-    query_as!(
-        Url,
-        "INSERT INTO vec_urls (url, embeding) VALUES (?, ?, ?, ?) RETURNING *",
-        url,
-        title,
-        description,
-        content,
-    )
-    .fetch_one(pool)
-    .await
-    .map_err(|e| anyhow!("database error: {}", e))?;
+
+    // vector emebeding
+    query("INSERT INTO vec_urls (url, embeding) VALUES (?, ?)")
+        .bind(url_string)
+        .bind(bytemuck::cast_slice(&embeding))
+        .execute(pool)
+        .await
+        .map_err(|e| anyhow!("database error: {}", e))?;
 
     Ok(url)
 }

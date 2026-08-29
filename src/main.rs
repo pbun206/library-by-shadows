@@ -6,11 +6,12 @@ mod handlers;
 mod model;
 mod route;
 mod services;
+#[cfg(test)]
+mod testing;
 
 use crate::{config::Config, services::vector_embeding::Embeder};
 use anyhow::Result;
 use dotenv::dotenv;
-use sqlite_vec::sqlite3_vec_init;
 use sqlx::SqlitePool;
 use std::sync::Arc;
 use tokio::sync::RwLock;

@@ -1,3 +1,4 @@
 pub mod api;
-pub mod web;
+#[cfg(test)]
 mod testing;
+pub mod web;
