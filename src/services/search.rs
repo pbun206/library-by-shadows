@@ -42,7 +42,7 @@ pub fn into_match_query(query: &str) -> String {
 mod tests {
     use sqlx::SqlitePool;
 
-    use crate::services::testing::{setup_template_urls, template_urls};
+    use crate::services::testing::setup_template_urls;
 
     use super::*;
 
@@ -53,6 +53,7 @@ mod tests {
         assert_eq!(search_query(&pool, "Miku", 100, 0).await.unwrap(), vec![]);
     }
 
+    // TODO use testing pool for this rather than sqlx::test
     /// Checks if setting limit gets back nothing
     #[sqlx::test]
     async fn search_none(pool: SqlitePool) {
