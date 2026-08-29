@@ -21,9 +21,11 @@ pub async fn search_query(
     let fts5: Vec<String> = search_query_by_fts5(pool, query, limit + offset).await?;
     let vec_search: Vec<String> =
         search_query_by_vec_search(pool, query, limit + offset, embeder).await?;
-    let fts5_inverted = invert_slice(&fts5);
-    let vec_search_inverted = invert_slice(&vec_search);
-    let rrf_results = rrf(fts5_inverted.into_iter().chain(vec_search_inverted));
+    let rrf_results = rrf(fts5
+        .iter()
+        .enumerate()
+        .chain(vec_search.iter().enumerate())
+        .map(|(rank, string)| (rank, string.as_str())));
     let mut vec_result = Vec::from_iter(rrf_results);
     vec_result.sort_unstable_by_key(|(_, rank)| Reverse(OrderedFloat(*rank)));
     vec_result.drain(..offset as usize);
@@ -40,20 +42,11 @@ pub async fn search_query(
         .collect::<Result<Vec<Url>, AppError>>()
 }
 
-/// Turn a vector into a hashmap by making the values the keys, and the index of the vector into values
-fn invert_slice(slice: &[String]) -> HashMap<&str, usize> {
-    slice
-        .iter()
-        .enumerate()
-        .map(|(i, val)| (val.as_str(), i))
-        .collect()
-}
-
 const RRF_K: f32 = 60.0;
-fn rrf<'a>(rankings: impl Iterator<Item = (&'a str, usize)>) -> HashMap<&'a str, f32> {
+fn rrf<'a>(rankings: impl Iterator<Item = (usize, &'a str)>) -> HashMap<&'a str, f32> {
     // Since we know the combination of the two has to be at least 10.
     let mut res = HashMap::with_capacity(20);
-    for (url, rank) in rankings {
+    for (rank, url) in rankings {
         *res.entry(url).or_insert(0.0) += 1.0 / (RRF_K + rank as f32 + 1.0)
     }
     res
@@ -184,7 +177,9 @@ mod tests {
     async fn vector_search_example(pool: SqlitePool) {
         let mut embeder = Embeder::try_new().unwrap();
         let res = setup_template_urls(&pool, &mut embeder).await;
-        let vec_search_output = search_query_by_vec_search(&pool, "Miku", 2, &mut embeder).await.unwrap();
+        let vec_search_output = search_query_by_vec_search(&pool, "Miku", 2, &mut embeder)
+            .await
+            .unwrap();
         assert_eq!(vec_search_output.len(), 2);
         assert_eq!(vec_search_output[0], res[0].clone().url);
         assert_eq!(vec_search_output[1], res[1].clone().url);
