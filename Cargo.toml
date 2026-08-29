@@ -30,6 +30,8 @@ tower = "0.5.3"
 askama_web = { version = "0.16.0", features = ["axum-0.8"] }
 zerocopy = "0.8.55"
 bytemuck = "1.25.2"
+ordered-float = "5.5.0"
+futures = "0.3.34"
 
 [dependencies.libsqlite3-sys]
 version = ">=0.30.1, <0.38.0"

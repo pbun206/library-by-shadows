@@ -13,8 +13,8 @@ impl Embeder {
             model: TextEmbedding::try_new(Default::default())?,
         })
     }
-    pub fn embed(&mut self, description: &str, content: &str) -> Result<Vec<f32>, AppError> {
-        let documents = vec![String::from(description) + content];
+    pub fn embed(&mut self, string: &str) -> Result<Vec<f32>, AppError> {
+        let documents = vec![string];
         Ok(self
             .model
             .embed(documents, None)

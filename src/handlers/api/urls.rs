@@ -19,7 +19,7 @@ pub async fn get_url(
     query: Query<UrlQuery>,
 ) -> Result<Json<GetUrlResponse>, AppError> {
     let state = &*app_state.read().await;
-    let internal_url = crate::services::urls::get_url(query.0.url, &state.pool)
+    let internal_url = crate::services::urls::get_url(&query.0.url, &state.pool)
         .await?
         .ok_or(AppError::NotFound)?;
     Ok(Json(GetUrlResponse {
@@ -115,7 +115,7 @@ mod tests {
     }
 
     // Post, delete, and get a url
-    #[sqlx::test]
+    #[tokio::test]
     async fn post_url_delete_and_get() {
         let test_server = testing_server().await;
         let response = test_server

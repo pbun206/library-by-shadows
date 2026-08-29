@@ -20,7 +20,7 @@ pub async fn get_search_page(
     State(app_state): State<Arc<RwLock<AppState>>>,
     query: Query<GetSearchQuery>,
 ) -> Result<SearchResultsTemplate, AppError> {
-    let state = app_state.read().await;
+    let state = &mut *app_state.write().await;
     let query = query.0;
     Ok(SearchResultsTemplate {
         results: search_query(
@@ -28,6 +28,7 @@ pub async fn get_search_page(
             &query.query,
             query.limit.unwrap_or(20),
             query.offset.unwrap_or(0),
+            &mut state.embeder,
         )
         .await?
         .into_iter()
@@ -47,6 +48,6 @@ pub async fn home(
     State(app_state): State<Arc<RwLock<AppState>>>,
 ) -> Result<HomeTemplate, AppError> {
     Ok(HomeTemplate {
-        search_field_value: String::new()
+        search_field_value: String::new(),
     })
 }

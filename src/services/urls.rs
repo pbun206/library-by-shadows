@@ -1,9 +1,9 @@
-use anyhow::{Result, anyhow, bail};
-use sqlx::{SqlitePool, query, query_as, query_scalar};
+use anyhow::{Result, anyhow};
+use sqlx::{SqlitePool, query, query_as};
 
 use crate::{
     error::AppError,
-    model::{Url, User},
+    model::Url,
     services::vector_embeding::Embeder,
 };
 
@@ -16,7 +16,7 @@ pub async fn add_url(
     pool: &SqlitePool,
     embeder: &mut Embeder,
 ) -> Result<Url, AppError> {
-    let embeding = embeder.embed(&description, &content)?;
+    let embeding = embeder.embed(&(String::from(&description) + " " + &content))?;
     let url = query_as!(
         Url,
         "INSERT INTO urls (url,title, description, content) VALUES (?, ?, ?, ?) RETURNING *",
@@ -64,7 +64,7 @@ pub async fn update_url(
 }
 
 /// Get a url from database :3. None -> not there
-pub async fn get_url(url: String, pool: &SqlitePool) -> Result<Option<Url>, AppError> {
+pub async fn get_url(url: &str, pool: &SqlitePool) -> Result<Option<Url>, AppError> {
     let url = query_as!(Url, "Select * FROM urls where url = ?", url,)
         .fetch_optional(pool)
         .await
@@ -73,13 +73,14 @@ pub async fn get_url(url: String, pool: &SqlitePool) -> Result<Option<Url>, AppE
 }
 
 /// Delete a url from database :<
+// TODO use a trigger to make vec url deltion automatic
 pub async fn delete_url(url: String, pool: &SqlitePool) -> Result<(), AppError> {
     query!("DELETE FROM urls where url = ? RETURNING *", url,)
         .fetch_optional(pool)
         .await
         .map_err(|e| anyhow!("database error: {}", e))?
         .ok_or(AppError::NotFound)?;
-    query("DELETE INTO vec_urls where url = ?")
+    query("DELETE FROM vec_urls where url = ?")
         .bind(url)
         .execute(pool)
         .await

@@ -5,6 +5,7 @@ use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
 
 const MAX_CONNECTIONS: u32 = 10;
 
+// TODO ensure unsafe code runs regardless of if this function calls
 /// Create a new `SqlitePoolOptions` instance and set the
 /// maximum number of connections in the connection pool to 10.
 pub async fn connect(pool_url: &str) -> Result<SqlitePool> {
