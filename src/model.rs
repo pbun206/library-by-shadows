@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
 
 #[derive(FromRow)]
+#[allow(dead_code)]
+// the fields isn't truely dead anyway -> it's used for sql
 pub struct User {
     pub uuid: String,
     pub username: String,
@@ -27,30 +29,6 @@ impl From<String> for Theme {
             _ => Self::System,
         }
     }
-}
-
-// Rules
-
-pub struct ListedRule {
-    pub uuid: String,
-    pub owner_uuid: String,
-    pub img_url: Option<String>,
-    pub rule_content: String,
-}
-
-enum Rule {
-    Meta(Vec<Rule>),
-    Url {
-        url: String,
-    },
-    Weighted {
-        rule: Box<Rule>,
-        weight: f32,
-    },
-    Ref {
-        listed_rule_uuid: String,
-        server_url: String,
-    },
 }
 
 // Urls

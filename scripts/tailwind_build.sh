@@ -1,1 +1,1 @@
-npx @tailwindcss/cli -i assets/app.css -o public/style.css
+tailwindcss -i assets/app.css -o public/style.css
