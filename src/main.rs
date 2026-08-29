@@ -36,6 +36,7 @@ impl AppState {
         }
     }
 
+    #[cfg(test)]
     pub fn with_test_config(pool: SqlitePool) -> Self {
         Self {
             pool,

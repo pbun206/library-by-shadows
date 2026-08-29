@@ -13,7 +13,8 @@ pkgs.mkShell {
     pkgs.pkg-config
     pkgs.sqlite
     pkgs.sqlx-cli
-    pkgs.tailwindcss
+    pkgs.tailwindcss_4
+    pkgs.just
   ];
   buildInputs = [
     pkgs.openssl

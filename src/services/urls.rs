@@ -1,11 +1,7 @@
 use anyhow::{Result, anyhow};
 use sqlx::{SqlitePool, query, query_as};
 
-use crate::{
-    error::AppError,
-    model::Url,
-    services::vector_embeding::Embeder,
-};
+use crate::{error::AppError, model::Url, services::vector_embeding::Embeder};
 
 /// Adds a url from database :3
 pub async fn add_url(
@@ -47,18 +43,27 @@ pub async fn update_url(
     description: String,
     content: String,
     pool: &SqlitePool,
+    embeder: &mut Embeder,
 ) -> Result<(), AppError> {
-    query_as!(
-        URL,
+    let embeding = embeder.embed(&(String::from(&description) + " " + &content))?;
+    query!(
         "UPDATE urls SET title = ?, description = ?, content = ? WHERE url = ?",
         title,
         description,
         content,
-        url,
+        url
     )
-    .fetch_one(pool)
+    .execute(pool)
     .await
     .map_err(|e| anyhow!("database error: {}", e))?;
+
+    // vector emebeding
+    query("UPDATE vec_urls SET embeding = ? WHERE url = ?")
+        .bind(bytemuck::cast_slice(&embeding))
+        .bind(url)
+        .execute(pool)
+        .await
+        .map_err(|e| anyhow!("database error: {}", e))?;
 
     Ok(())
 }
