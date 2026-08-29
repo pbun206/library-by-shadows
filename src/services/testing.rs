@@ -1,6 +1,9 @@
 use sqlx::SqlitePool;
 
-use crate::{model::Url, services::urls::add_url};
+use crate::{
+    model::Url,
+    services::{urls::add_url, vector_embeding::Embeder},
+};
 
 pub fn template_urls() -> [Url; 6] {
     [Url::with_default_metadata(
@@ -25,7 +28,7 @@ pub fn template_urls() -> [Url; 6] {
                 "en.wikipedia.org/wiki/Kagamine_Rin/Len".to_string(),
                  "Kagamine Rin/Len".to_string(),
                 "From Wikipedia, the free encyclopedia".to_string(),
-                "<My fav duo>".to_string(),
+                "<My fav duo y'all (i don't know anything about them)>".to_string(),
     ),
         Url::with_default_metadata(
                 "doc.rust-lang.org/std/primitive.str.html".to_string(),
@@ -50,13 +53,22 @@ pub fn template_urls() -> [Url; 6] {
 /// The Fifth is the rust strs
 /// the sixth is code blocks, an ide
 /// For testing purposes, the content isn't real
-pub async fn setup_template_urls(pool: &SqlitePool) -> Vec<Url> {
+pub async fn setup_template_urls(pool: &SqlitePool, embeder: &mut Embeder) -> Vec<Url> {
     let template_urls = template_urls();
     let mut res: Vec<Url> = Vec::with_capacity(template_urls.len());
     for url in template_urls {
-        res.push(add_url(url.url, url.title, url.description, url.content, pool)
+        res.push(
+            add_url(
+                url.url,
+                url.title,
+                url.description,
+                url.content,
+                pool,
+                embeder,
+            )
             .await
-            .unwrap())
+            .unwrap(),
+        )
     }
     res
 }

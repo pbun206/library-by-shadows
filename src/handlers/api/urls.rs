@@ -18,8 +18,8 @@ pub async fn get_url(
     State(app_state): State<Arc<RwLock<AppState>>>,
     query: Query<UrlQuery>,
 ) -> Result<Json<GetUrlResponse>, AppError> {
-    let state = app_state.read().await;
-    let internal_url = crate::services::urls::get_url(query.0.url, &state.pool)
+    let state = &*app_state.read().await;
+    let internal_url = crate::services::urls::get_url(&query.0.url, &state.pool)
         .await?
         .ok_or(AppError::NotFound)?;
     Ok(Json(GetUrlResponse {
@@ -37,13 +37,14 @@ pub async fn post_url(
     State(app_state): State<Arc<RwLock<AppState>>>,
     Json(payload): Json<PostUrlRequest>,
 ) -> Result<StatusCode, AppError> {
-    let state = app_state.read().await;
+    let state = &mut *app_state.write().await;
     add_url(
         payload.url,
         payload.title,
         payload.description,
         payload.content,
         &state.pool,
+        &mut state.embeder,
     )
     .await?;
     Ok(StatusCode::CREATED)
@@ -62,14 +63,13 @@ pub async fn delete_url(
 mod tests {
     use crate::handlers::testing::testing_server;
     use serde_json::json;
-    use sqlx::SqlitePool;
 
     use super::*;
 
     // Post url
-    #[sqlx::test]
-    fn post_url(pool: SqlitePool) {
-        let test_server = testing_server(pool);
+    #[tokio::test]
+    async fn post_url() {
+        let test_server = testing_server().await;
         let response = test_server
             .post("/api/index/urls")
             .json(&json!(PostUrlRequest {
@@ -83,9 +83,9 @@ mod tests {
     }
 
     // Post and get url
-    #[sqlx::test]
-    fn post_url_and_get(pool: SqlitePool) {
-        let test_server = testing_server(pool);
+    #[tokio::test]
+    async fn post_url_and_get() {
+        let test_server = testing_server().await;
         let response = test_server
             .post("/api/index/urls")
             .json(&json!(PostUrlRequest {
@@ -115,9 +115,9 @@ mod tests {
     }
 
     // Post, delete, and get a url
-    #[sqlx::test]
-    fn post_url_delete_and_get(pool: SqlitePool) {
-        let test_server = testing_server(pool);
+    #[tokio::test]
+    async fn post_url_delete_and_get() {
+        let test_server = testing_server().await;
         let response = test_server
             .post("/api/index/urls")
             .json(&json!(PostUrlRequest {

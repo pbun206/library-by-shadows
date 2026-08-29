@@ -1,4 +1,7 @@
 /target
+.sqlx/
+/extensions
+.fastembed_cache
 .env
 lbs.db.bak
 lbs.db

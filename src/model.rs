@@ -67,7 +67,13 @@ pub struct Url {
 }
 
 impl Url {
-    pub fn with_default_metadata(url: String, title: String, description: String, content:String) -> Url {
+    #[cfg(test)]
+    pub fn with_default_metadata(
+        url: String,
+        title: String,
+        description: String,
+        content: String,
+    ) -> Url {
         Url {
             url,
             title,
@@ -102,5 +108,3 @@ impl From<Url> for SearchResult {
         }
     }
 }
-
-

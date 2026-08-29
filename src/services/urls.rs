@@ -1,23 +1,26 @@
-use anyhow::{Result, anyhow, bail};
-use sqlx::{SqlitePool, query_as, query_scalar};
+use anyhow::{Result, anyhow};
+use sqlx::{SqlitePool, query, query_as};
 
 use crate::{
     error::AppError,
-    model::{Url, User},
+    model::Url,
+    services::vector_embeding::Embeder,
 };
 
 /// Adds a url from database :3
 pub async fn add_url(
-    url: String,
+    url_string: String,
     title: String,
     description: String,
     content: String,
     pool: &SqlitePool,
+    embeder: &mut Embeder,
 ) -> Result<Url, AppError> {
+    let embeding = embeder.embed(&(String::from(&description) + " " + &content))?;
     let url = query_as!(
         Url,
         "INSERT INTO urls (url,title, description, content) VALUES (?, ?, ?, ?) RETURNING *",
-        url,
+        url_string,
         title,
         description,
         content,
@@ -25,6 +28,14 @@ pub async fn add_url(
     .fetch_one(pool)
     .await
     .map_err(|e| anyhow!("database error: {}", e))?;
+
+    // vector emebeding
+    query("INSERT INTO vec_urls (url, embeding) VALUES (?, ?)")
+        .bind(url_string)
+        .bind(bytemuck::cast_slice(&embeding))
+        .execute(pool)
+        .await
+        .map_err(|e| anyhow!("database error: {}", e))?;
 
     Ok(url)
 }
@@ -53,7 +64,7 @@ pub async fn update_url(
 }
 
 /// Get a url from database :3. None -> not there
-pub async fn get_url(url: String, pool: &SqlitePool) -> Result<Option<Url>, AppError> {
+pub async fn get_url(url: &str, pool: &SqlitePool) -> Result<Option<Url>, AppError> {
     let url = query_as!(Url, "Select * FROM urls where url = ?", url,)
         .fetch_optional(pool)
         .await
@@ -62,11 +73,17 @@ pub async fn get_url(url: String, pool: &SqlitePool) -> Result<Option<Url>, AppE
 }
 
 /// Delete a url from database :<
+// TODO use a trigger to make vec url deltion automatic
 pub async fn delete_url(url: String, pool: &SqlitePool) -> Result<(), AppError> {
-    query_as!(Url, "DELETE FROM urls where url = ? RETURNING *", url,)
+    query!("DELETE FROM urls where url = ? RETURNING *", url,)
         .fetch_optional(pool)
         .await
         .map_err(|e| anyhow!("database error: {}", e))?
         .ok_or(AppError::NotFound)?;
+    query("DELETE FROM vec_urls where url = ?")
+        .bind(url)
+        .execute(pool)
+        .await
+        .map_err(|e| anyhow!("database error: {}", e))?;
     Ok(())
 }
