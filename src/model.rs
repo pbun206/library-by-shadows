@@ -15,6 +15,7 @@ pub struct User {
     pub is_admin: bool,
 }
 
+#[derive(Deserialize, Serialize)]
 pub enum Theme {
     System,
     Light,

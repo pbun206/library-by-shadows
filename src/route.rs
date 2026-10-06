@@ -18,7 +18,7 @@ use crate::{
     AppState,
     handlers::{
         api::{
-            auth::{post_login, post_register},
+            auth::{get_me, post_login, post_register},
             urls::{delete_url, get_url, post_url},
         },
         web::{
@@ -68,6 +68,7 @@ pub fn create_router(app_state: Arc<RwLock<AppState>>) -> Router {
 
     let auth_routes = Router::new()
         .route("/register", post(post_register))
+        .route("/me", get(get_me))
         .route("/login", post(post_login));
 
     // Cors for API routes only

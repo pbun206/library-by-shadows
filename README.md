@@ -4,6 +4,11 @@ A Crowdsourced Search Engine where human and not bots make search results
 
 If you want to see the most recent changes, check out the repo's branches.
 
+# Demo
+
+TODO
+
+
 # AI Use
 
 First of all, the search uses a hybird model to use BM25 and density search. Part of density search is transformer models. So in that way, this is an AI-powered application.

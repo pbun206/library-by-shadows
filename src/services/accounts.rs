@@ -75,24 +75,33 @@ pub async fn get_user_from_username(
     username: &str,
     pool: &SqlitePool,
 ) -> Result<Option<User>, AppError> {
-    let url = query_as!(User, "Select * FROM users where username = ?", username,)
+    let user = query_as!(User, "Select * FROM users where username = ?", username,)
         .fetch_optional(pool)
         .await
         .map_err(|e| anyhow!("database error: {}", e))?;
-    Ok(url)
+    Ok(user)
 }
 
 /// Get a user from database from email
 pub async fn get_user_from_email(email: &str, pool: &SqlitePool) -> Result<Option<User>, AppError> {
-    let url = query_as!(User, "Select * FROM users where email = ?", email,)
+    let user = query_as!(User, "Select * FROM users where email = ?", email,)
         .fetch_optional(pool)
         .await
         .map_err(|e| anyhow!("database error: {}", e))?;
-    Ok(url)
+    Ok(user)
+}
+
+/// Get a user from database from uuid
+pub async fn get_user_from_uuid(uuid: &str, pool: &SqlitePool) -> Result<Option<User>, AppError> {
+    let user = query_as!(User, "Select * FROM users where uuid = ?", uuid,)
+        .fetch_optional(pool)
+        .await
+        .map_err(|e| anyhow!("database error: {}", e))?;
+    Ok(user)
 }
 
 pub fn does_hash_match_password(hash: &str, password: &str, pepper: &str) -> Result<(), AppError> {
-    let parsed_hash = PasswordHash::new(&hash).map_err(|e| anyhow!("argon error: {}", e))?;
+    let parsed_hash = PasswordHash::new(hash).map_err(|e| anyhow!("argon error: {}", e))?;
     Argon2::new_with_secret(
         pepper.as_bytes(),
         Algorithm::default(),
@@ -101,7 +110,10 @@ pub fn does_hash_match_password(hash: &str, password: &str, pepper: &str) -> Res
     )
     .map_err(|e| anyhow!("argon error: {}", e))?
     .verify_password(password.as_bytes(), &parsed_hash)
-    .map_err(|e| anyhow!("argon error: {}", e).into())
+    .map_err(|e| match e {
+        argon2::password_hash::Error::PasswordInvalid => AppError::Unauthorized,
+        _ => anyhow!("argon error: {}", e).into(),
+    })
 }
 
 pub async fn authenticate_user(
@@ -111,11 +123,11 @@ pub async fn authenticate_user(
     pepper: &str,
 ) -> Result<User, AppError> {
     // Find username or email was inputted.
-    let is_username = is_username_valid(&username_or_email);
+    let is_username = is_username_valid(username_or_email);
     let user = if is_username {
-        get_user_from_username(&username_or_email, pool).await
+        get_user_from_username(username_or_email, pool).await
     } else {
-        get_user_from_email(&username_or_email, pool).await
+        get_user_from_email(username_or_email, pool).await
     }?
     .ok_or(AppError::Unauthorized)?;
 

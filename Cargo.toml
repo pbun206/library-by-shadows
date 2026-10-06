@@ -31,7 +31,7 @@ zerocopy = "0.8.55"
 bytemuck = "1.25.2"
 ordered-float = "5.5.0"
 futures = "0.3.34"
-jsonwebtoken = "11.0.0"
+jsonwebtoken = { version = "11.0.0", features = ["rust_crypto"] }
 axum-extra = { version = "0.12.6", features = ["typed-header"] }
 
 [dependencies.libsqlite3-sys]
