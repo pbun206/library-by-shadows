@@ -42,6 +42,7 @@ pub async fn search_query(
         .collect::<Result<Vec<Url>, AppError>>()
 }
 
+// Calculate unordered map of rrf rankings
 const RRF_K: f32 = 60.0;
 fn rrf<'a>(rankings: impl Iterator<Item = (usize, &'a str)>) -> HashMap<&'a str, f32> {
     // Since we know the combination of the two has to be at least 10.
@@ -102,7 +103,7 @@ pub fn into_match_query(query: &str) -> String {
 mod tests {
     use sqlx::SqlitePool;
 
-    use crate::services::testing::setup_template_urls;
+    use crate::{services::testing::setup_template_urls, testing::testing_pool};
 
     use super::*;
 
@@ -121,8 +122,9 @@ mod tests {
 
     // TODO use testing pool for this rather than sqlx::test
     /// Checks if setting limit gets back nothing
-    #[sqlx::test]
-    async fn search_none(pool: SqlitePool) {
+    #[tokio::test]
+    async fn search_none() {
+        let pool = testing_pool().await;
         let mut embeder = Embeder::try_new().unwrap();
         setup_template_urls(&pool, &mut embeder).await;
         assert_eq!(
@@ -134,8 +136,9 @@ mod tests {
     }
 
     /// Checks if search one matches expected result
-    #[sqlx::test]
-    async fn search_one(pool: SqlitePool) {
+    #[tokio::test]
+    async fn search_one() {
+        let pool = testing_pool().await;
         let mut embeder = Embeder::try_new().unwrap();
         let res = setup_template_urls(&pool, &mut embeder).await;
         assert_eq!(
@@ -147,8 +150,9 @@ mod tests {
     }
 
     /// Checks if offset works
-    #[sqlx::test]
-    async fn search_offset(pool: SqlitePool) {
+    #[tokio::test]
+    async fn search_offset() {
+        let pool = testing_pool().await;
         let mut embeder = Embeder::try_new().unwrap();
         let res = setup_template_urls(&pool, &mut embeder).await;
         assert_eq!(
@@ -160,8 +164,9 @@ mod tests {
     }
 
     /// Checks if search multiple works
-    #[sqlx::test]
-    async fn search_multiples(pool: SqlitePool) {
+    #[tokio::test]
+    async fn search_multiples() {
+        let pool = testing_pool().await;
         let mut embeder = Embeder::try_new().unwrap();
         let res = setup_template_urls(&pool, &mut embeder).await;
         assert_eq!(
@@ -173,8 +178,9 @@ mod tests {
     }
 
     /// Check if vector search is running
-    #[sqlx::test]
-    async fn vector_search_example(pool: SqlitePool) {
+    #[tokio::test]
+    async fn vector_search_example() {
+        let pool = testing_pool().await;
         let mut embeder = Embeder::try_new().unwrap();
         let res = setup_template_urls(&pool, &mut embeder).await;
         let vec_search_output = search_query_by_vec_search(&pool, "Miku", 2, &mut embeder)
