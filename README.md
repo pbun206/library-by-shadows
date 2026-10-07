@@ -8,6 +8,9 @@ If you want to see the most recent changes, check out the repo's branches.
 
 TODO
 
+![Home page sample](./promotion_assets/2.png)
+![Search results sample with vegan chili as first result of "no meat chili"](./promotion_assets/1.png)
+
 
 # AI Use
 
