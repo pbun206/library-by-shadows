@@ -4,6 +4,19 @@ A Crowdsourced Search Engine where human and not bots make search results
 
 If you want to see the most recent changes, check out the repo's branches.
 
+# Host
+
+To host it, simply
+
+```bash
+git clone git@github.com:pbun206/library-by-shadows.git
+# or git clone https://github.com/pbun206/library-by-shadows.git
+cd library-by-shadows/
+just run
+```
+
+Deps
+
 # Demo
 
 TODO
