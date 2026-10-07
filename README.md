@@ -4,6 +4,15 @@ A Crowdsourced Search Engine where human and not bots make search results
 
 If you want to see the most recent changes, check out the repo's branches.
 
+
+# Demo
+
+TODO
+
+![Home page sample](./promotion_assets/2.png)
+![Search results sample with vegan chili as first result of "no meat chili"](./promotion_assets/1.png)
+
+
 # Host
 
 To host it, simply
@@ -14,16 +23,7 @@ git clone git@github.com:pbun206/library-by-shadows.git
 cd library-by-shadows/
 just run
 ```
-
-Deps
-
-# Demo
-
-TODO
-
-![Home page sample](./promotion_assets/2.png)
-![Search results sample with vegan chili as first result of "no meat chili"](./promotion_assets/1.png)
-
+During its first run, it'll download [a FastEmbed model](https://docs.rs/fastembed/latest/fastembed/). 
 
 # AI Use
 
